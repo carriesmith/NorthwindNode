@@ -9,10 +9,10 @@ var mongoose = require('mongoose'),
 /**
 * Validation
 */
-function validateLength(v){
-  // a custom validation function for checking string
-  // length to be used by the model
 
+function validateLength(v){
+  // a custom validation function to check category name
+  // is 15 characters or less
   return v.length <= 15;
 }
 
@@ -20,36 +20,30 @@ function validateLength(v){
  * Category Schema
  */
 var CategorySchema = new Schema({
-	
-  // property name
+
   created: {
-    // types are defined e.g. string, date, number 
-    // http://mongoosejs.com.docs/guide.html
-    type: Date,
-    default: Date.now
-  },
-  description: {
-    type: String,
-    default: '',
-    // types have specific functions e.g. trim, lowercase, uppercase
-    // http://mongoosejs.com/docs/api.html#schema-string-js
-    trim: true
+    // types are defined e.g. String, Date, Number 
+    // http://mongoosejs.com/docs/guide.html
+    type: Date,   
+    // default values can be set
+    default: Date.now 
   },
   name: {
     type: String,
-    default: '',
+    default: '', 
+    required: 'name cannot be blank',
     trim: true,
     unique: true,
-    // // make this a required field
-    required: 'name cannot be blank',
-    // // wires in a custom validator function
-    // // http://mongoosejs.com/docs/api.html#schematype_SchemaType-validate
+    // wires in a custom validator function (http://mongoosejs.com/docs/api.html#schematype_SchemaType-validate).
     validate: [validateLength, 'name must be 15 chars in length or less']
+  }, 
+  description: {
+    type: String,
+    default: '',
+    // types have specific functions e.g. trim, lowercase, uppercase (http://mongoosejs.com/docs/api.html#schema-string-js)
+    trim: true
   }
 
 });
 
-// http://www.bradoncode.com/tutorials/mean-stack-tutorial-part-2-server-side/
-// I have no idea what this comment means ???
-// expose the model to other objects (similar to a 'public' setter) ???
 mongoose.model('Category', CategorySchema);
