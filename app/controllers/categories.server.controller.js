@@ -30,7 +30,9 @@ exports.create = function(req, res) {
  * Show the current Category
  */
 exports.read = function(req, res) {
+
   res.json(req.category);
+
 };
 
 /**
@@ -53,7 +55,7 @@ exports.update = function(req, res) {
 };
 
 /**
- * Delete an Category
+ * Delete a Category
  */
 exports.delete = function(req, res) {
   var category = req.category;

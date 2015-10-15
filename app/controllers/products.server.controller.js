@@ -8,6 +8,7 @@ var mongoose = require('mongoose'),
 
 var errorHandler = require('./errors.server.controller');
 var Product = mongoose.model('Product');
+var Category = mongoose.model('Category');
 
 
 /**
@@ -16,7 +17,7 @@ var Product = mongoose.model('Product');
 exports.create = function(req, res) {
 
   var product = new Product(req.body);
-  
+
   product.save(function(err){
 
     if (err) {
@@ -36,6 +37,8 @@ exports.create = function(req, res) {
  */
 exports.read = function(req, res) {
 
+  res.json(req.product);
+
 };
 
 /**
@@ -46,9 +49,22 @@ exports.update = function(req, res) {
 };
 
 /**
- * Delete an Product
+ * Delete a Product
  */
 exports.delete = function(req, res) {
+
+  var product = req.product;
+
+  product.remove(function(err){
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      res.json(product);
+    }
+
+  });
 
 };
 
@@ -66,3 +82,28 @@ exports.list = function(req, res) {
     }
   });
 };
+
+/**
+ * Product middleware
+ */
+exports.productByID = function(req, res, next, id) {
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).send({
+      message: 'Product is invalid'
+    });
+  }
+
+  Product.findById(id).exec(function(err, product) {
+    if (err) return next(err);
+    if (!product) {
+      return res.status(404).send({
+          message: 'Product not found'
+        });
+    }
+    req.product = product;
+    next();
+  });
+};
+
+
